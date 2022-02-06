@@ -76,24 +76,22 @@ load_data = json => {
 
         app_picker_selector.append(node)
     })
-    plot_performance_issues()
-    plot_service_disruptions()
+    plot()
 }
 
-plot_performance_issues = () => {
-    var selected_year = year_picker_selector.value;
-    var y = performance_issues[
-        Object.keys(performance_issues)[Object.keys(performance_issues).length - 1]
-    ]
+plot = () => {
+    var year = year_picker_selector.value || Math.max(...years)
 
-    if (selected_year != null && selected_year != "") {
-        y = performance_issues[selected_year]
-    }
+    plot_performance_issues(year)
+    plot_service_disruptions(year)
+    plot_total_downtime(year)
+}
 
+plot_performance_issues = (year) => {
     var data = [
       {
         x: months,
-        y: y,
+        y: performance_issues[year],
         name:"Performance Issues",
         type: 'bar'
       }
@@ -102,26 +100,30 @@ plot_performance_issues = () => {
     Plotly.newPlot('performance_issues', data);
 }
 
-plot_service_disruptions = () => {
-    var selected_year = year_picker_selector.value;
-    var y = service_disruptions[
-        Object.keys(service_disruptions)[Object.keys(service_disruptions).length - 1]
-    ]
-
-    if (selected_year != null && selected_year != "") {
-        y = service_disruptions[selected_year]
-    }
-
+plot_service_disruptions = (year) => {
     var data = [
       {
         x: months,
-        y: y,
+        y: service_disruptions[year],
         name:"Service Disruptions",
         type: 'bar'
       }
     ];
 
     Plotly.newPlot('service_disruptions', data);
+}
+
+plot_total_downtime = (year) => {
+    var data = [
+      {
+        x: months,
+        y: total_downtime[year],
+        name:"Total Downtime",
+        type: 'bar'
+      }
+    ];
+
+    Plotly.newPlot('total_downtime', data);
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
