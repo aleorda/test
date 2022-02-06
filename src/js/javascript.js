@@ -7,8 +7,13 @@ var service_disruptions = {}
 var total_downtime = {}
 
 var month_picker_selector = document.getElementById('month')
+month_picker_selector.onchange = () => {plot()}
+
 var year_picker_selector = document.getElementById('year')
+year_picker_selector.onchange = () => {plot()}
+
 var app_picker_selector = document.getElementById('application')
+app_picker_selector.onchange = () => {plot()}
 
 months.forEach(month => {
     var node = document.createElement("option")
