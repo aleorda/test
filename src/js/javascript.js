@@ -1,3 +1,5 @@
+var stored_data = null
+
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 var years = []
 var applications = []
@@ -10,7 +12,9 @@ var month_picker_selector = document.getElementById('month')
 month_picker_selector.onchange = () => {plot()}
 
 var year_picker_selector = document.getElementById('year')
-year_picker_selector.onchange = () => {plot()}
+year_picker_selector.onchange = () => {
+    plot()
+}
 
 var app_picker_selector = document.getElementById('application')
 app_picker_selector.onchange = () => {plot()}
@@ -25,7 +29,6 @@ months.forEach(month => {
 
 fake = () => {
     var fake_data = {"data": []}
-
     Array("A","B","C","D").forEach(app => {
         Array(12).fill(0).map((_, i) => i+1).forEach(i => {
             Array(6).fill(0).map((_, i) => i+2018).forEach(j => {
@@ -43,19 +46,20 @@ fake = () => {
   }
 
 fetch_data = () => {
-    return load_data(fake())
+    stored_data = fake()
+    return load_data()
+
     try {
         return $.get("data.json", function(data, status) {
             console.log(data, status)
-            load_data(result)
         })
     } catch (err) {
         console.log(err)
     }
 }
 
-load_data = json => {
-    json.data.forEach(record => {
+load_data = () => {
+    stored_data.data.forEach(record => {
         var date = new Date(record['date'])
 
         var year = date.getFullYear()
@@ -97,6 +101,7 @@ load_data = json => {
 
 plot = () => {
     var year = year_picker_selector.value || Math.max(...years)
+    var month = month_picker_selector.value || null
 
     plot_performance_issues(year)
     plot_service_disruptions(year)
