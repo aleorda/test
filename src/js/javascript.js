@@ -18,9 +18,9 @@ months.forEach(month => {
     month_picker_selector.append(node)
 })
 
-fetch_data = async () => {
+fetch_data = () => {
     try {
-        return await $.getJSON('./data.json')
+        return $.getJSON('./data.json').then(response => response).then(data => load_data(data))
     } catch (err) {
         console.log(err)
     }
@@ -55,11 +55,22 @@ load_data = json => {
 
         app_picker_selector.append(node)
     })
+    plot_performance_issues()
 }
 
-plot_performance_issues = data => {
+plot_performance_issues = (x, y) => {
+    var data = [
+      {
+        x: months,
+        y: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        name:"Performance Issues",
+        type: 'bar'
+      }
+    ];
+
+    Plotly.newPlot('performance_issues', data);
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    fetch_data().then(data => load_data(data))
+    fetch_data()
 })
