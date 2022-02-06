@@ -41,6 +41,14 @@ app_picker_selector.onchange = () => {
     }
 }
 
+
+var performance_issues_total_count = document.getElementById('performance_issues_total_count')
+performance_issues_total_count.textContent = 0
+var service_disruptions_total_count = document.getElementById('service_disruptions_total_count')
+service_disruptions_total_count.textContent = 0
+var total_downtime_total_count = document.getElementById('total_downtime_total_count')
+total_downtime_total_count.textContent = 0
+
 months.forEach(month => {
     var node = document.createElement("option")
     node.value = month
@@ -146,6 +154,10 @@ apply_filter = () => {
         service_disruptions[month] += record['service_disruptions']
         total_downtime[month] += record['total_downtime']
     })
+
+    performance_issues_total_count.textContent = performance_issues.reduce((partialSum, a) => partialSum + a, 0);
+    service_disruptions_total_count.textContent = service_disruptions.reduce((partialSum, a) => partialSum + a, 0);
+    total_downtime_total_count.textContent = total_downtime.reduce((partialSum, a) => partialSum + a, 0);
 }
 
 plot = () => {
@@ -174,7 +186,7 @@ plot_performance_issues = () => {
       }
     ]
     var layout = {
-        title:"Performance Issues",
+        // title:"Performance Issues",
         showlegend: false,
         yaxis: {
             rangemode: 'tozero',
@@ -204,7 +216,7 @@ plot_service_disruptions = () => {
       }
     ]
     var layout = {
-        title:"Service Disruptions",
+        // title:"Service Disruptions",
         showlegend: false,
         yaxis: {
             rangemode: 'tozero',
@@ -234,7 +246,7 @@ plot_total_downtime = () => {
       }
     ]
     var layout = {
-        title:"Total Downtime",
+        // title:"Total Downtime",
         showlegend: false,
         yaxis: {
             rangemode: 'tozero',

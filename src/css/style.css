@@ -6,3 +6,29 @@
         align-self: center;
     }
 }
+
+#info {
+    display: flex;
+}
+
+#txt, #graphs {
+    width: 50%;
+}
+
+#txt {
+    padding-top: 10px;
+}
+
+#performance_issues_total, #service_disruptions_total, #total_downtime_total {
+    height: 450px;
+    text-align: center;
+}
+
+#performance_issues_total_txt, #service_disruptions_total_txt, #total_downtime_total_txt {
+    text-align: center
+}
+
+#performance_issues_total_count, #service_disruptions_total_count, #total_downtime_total_count {
+    font-size: 150px;
+    text-align: center;
+}
