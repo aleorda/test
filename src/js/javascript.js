@@ -2,13 +2,13 @@ var months = ["January","February","March","April","May","June","July","August",
 var years = []
 var applications = []
 
-var performance_issues = []
-var service_disruptions = []
-var total_downtime = []
+var performance_issues = {}
+var service_disruptions = {}
+var total_downtime = {}
 
-var month_picker_selector = $('#month')
-var year_picker_selector = $('#year')
-var app_picker_selector = $('#application')
+var month_picker_selector = document.getElementById('month')
+var year_picker_selector = document.getElementById('year')
+var app_picker_selector = document.getElementById('application')
 
 months.forEach(month => {
     var node = document.createElement("option")
@@ -19,6 +19,15 @@ months.forEach(month => {
 })
 
 fetch_data = () => {
+    return load_data({
+            "data": [
+              {"application":  "A", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+              {"application":  "B", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+              {"application":  "C", "date":  "01/01/2021", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+              {"application":  "D", "date":  "02/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+              {"application":  "D", "date":  "03/01/2021", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+            ]
+          })
     try {
         return $.get("data.json", function(data, status) {
             console.log(data, status)
@@ -32,15 +41,24 @@ fetch_data = () => {
 load_data = json => {
     json.data.forEach(record => {
         var date = new Date(record['date'])
+
         var year = date.getFullYear()
+        var month = date.getMonth()
 
         if (!years.includes(year)) {
             years[years.length] = year
+            performance_issues[year] = Array(months.length).fill(0)
+            service_disruptions[year] = Array(months.length).fill(0)
+            total_downtime[year] = Array(months.length).fill(0)
         }
 
-        if(!applications.includes(record['application'])){
+        if(!applications.includes(record['application'])) {
             applications[applications.length] = record['application']
         }
+
+        performance_issues[year][month] += record['performance_issues']
+        service_disruptions[year][month] += record['service_disruptions']
+        total_downtime[year][month] += record['total_downtime']
     })
 
     years.forEach(year => {
@@ -61,11 +79,20 @@ load_data = json => {
     plot_performance_issues()
 }
 
-plot_performance_issues = (x, y) => {
+plot_performance_issues = () => {
+    var selected_year = year_picker_selector.value;
+    var y = performance_issues[
+        Object.keys(performance_issues)[Object.keys(performance_issues).length - 1]
+    ]
+
+    if (selected_year != null && selected_year != "") {
+        y = performance_issues[selected_year]
+    }
+
     var data = [
       {
         x: months,
-        y: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        y: y,
         name:"Performance Issues",
         type: 'bar'
       }
