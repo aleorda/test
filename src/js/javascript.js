@@ -9,11 +9,25 @@ var service_disruptions = {}
 var total_downtime = {}
 
 var month_picker_selector = document.getElementById('month')
-month_picker_selector.onchange = () => {plot()}
+var selected_month = month_picker_selector.value
+
+month_picker_selector.onchange  = () => {
+   var new_value = month_picker_selector.value
+   if (new_value != selected_month) {
+       selected_month = month_picker_selector.value
+       plot(selected_year, selected_month)
+   }
+}
 
 var year_picker_selector = document.getElementById('year')
+var selected_year = year_picker_selector.value
+
 year_picker_selector.onchange = () => {
-    plot()
+    var new_value = year_picker_selector.value
+    if (new_value != selected_year) {
+        selected_year = year_picker_selector.value
+        plot(selected_year, selected_month)
+    }
 }
 
 var app_picker_selector = document.getElementById('application')
@@ -65,6 +79,10 @@ load_data = () => {
         var year = date.getFullYear()
         var month = date.getMonth()
 
+        if(!applications.includes(record['application'])) {
+            applications[applications.length] = record['application']
+        }
+
         if (!years.includes(year)) {
             years[years.length] = year
             performance_issues[year] = Array(months.length).fill(0)
@@ -72,13 +90,17 @@ load_data = () => {
             total_downtime[year] = Array(months.length).fill(0)
         }
 
-        if(!applications.includes(record['application'])) {
-            applications[applications.length] = record['application']
-        }
-
         performance_issues[year][month] += record['performance_issues']
         service_disruptions[year][month] += record['service_disruptions']
         total_downtime[year][month] += record['total_downtime']
+    })
+
+    applications.forEach(application => {
+        var node = document.createElement("option")
+        node.value = application.toLowerCase()
+        node.append(document.createTextNode(application))
+
+        app_picker_selector.append(node)
     })
 
     years.forEach(year => {
@@ -89,26 +111,20 @@ load_data = () => {
         year_picker_selector.append(node)
     })
 
-    applications.forEach(application => {
-        var node = document.createElement("option")
-        node.value = application.toLowerCase()
-        node.append(document.createTextNode(application))
-
-        app_picker_selector.append(node)
-    })
-    plot()
+    plot(Math.max(...years))
 }
 
-plot = () => {
-    var year = year_picker_selector.value || Math.max(...years)
-    var month = month_picker_selector.value || null
-
-    plot_performance_issues(year)
-    plot_service_disruptions(year)
-    plot_total_downtime(year)
+plot = (year=null, month=null, application=null) => {
+    plot_performance_issues(year, month, application)
+    plot_service_disruptions(year, month, application)
+    plot_total_downtime(year, month, application)
 }
 
-plot_performance_issues = (year) => {
+plot_performance_issues = (year=null, month=null, application=null) => {
+    if(year == null) {
+        year = Math.max(...years)
+    }
+
     var data = [
       {
         x: months,
@@ -121,7 +137,11 @@ plot_performance_issues = (year) => {
     Plotly.newPlot('performance_issues', data);
 }
 
-plot_service_disruptions = (year) => {
+plot_service_disruptions = (year=null, month=null, application=null) => {
+    if(year == null) {
+        year = Math.max(...years)
+    }
+
     var data = [
       {
         x: months,
@@ -134,7 +154,11 @@ plot_service_disruptions = (year) => {
     Plotly.newPlot('service_disruptions', data);
 }
 
-plot_total_downtime = (year) => {
+plot_total_downtime = (year=null, month=null, application=null) => {
+    if(year == null) {
+        year = Math.max(...years)
+    }
+
     var data = [
       {
         x: months,
