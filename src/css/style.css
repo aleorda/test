@@ -1,0 +1,8 @@
+#filters {
+    display: inline-flex;
+    justify-content: space-evenly;
+
+    div {
+        align-self: center;
+    }
+}

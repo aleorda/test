@@ -125,17 +125,18 @@ clear = () => {
 
 apply_filter = () => {
     var filtered = stored_data.data.filter(record => {
+        var app_filter = true
+        var year_filter = true
+        var month_filter = true
+
         if (selected_app != null && selected_app != '')
-            return (record['application'] == selected_app)
-        return true
-    }).filter(record => {
+            app_filter = (record['application'] == selected_app)
         if (selected_year != null && selected_year != '')
-            return (new Date(record['date']).getFullYear() == selected_year)
-        return true
-    }).filter(record => {
+            year_filter = (new Date(record['date']).getFullYear() == selected_year)
         if (selected_month != null && selected_month != '')
-            return (new Date(record['date']).getMonth() == months.indexOf(selected_month))
-        return true
+            month_filter = (new Date(record['date']).getMonth() == months.indexOf(selected_month))
+
+        return app_filter && year_filter && month_filter
     })
 
     filtered.forEach(record => {
@@ -169,12 +170,21 @@ plot_performance_issues = () => {
       {
         x: x,
         y: y,
-        name:"Performance Issues",
         type: 'bar'
       }
-    ];
+    ]
+    var layout = {
+        title:"Performance Issues",
+        showlegend: false,
+        yaxis: {
+            rangemode: 'tozero',
+        },
+        xaxis: {
+            rangemode: 'tozero',
+        },
+    }
 
-    Plotly.newPlot('performance_issues', data);
+    Plotly.newPlot('performance_issues', data, layout, {displaylogo: false, responsive: true});
 }
 
 plot_service_disruptions = () => {
@@ -190,12 +200,21 @@ plot_service_disruptions = () => {
       {
         x: x,
         y: y,
-        name:"Service Disruptions",
         type: 'bar'
       }
-    ];
+    ]
+    var layout = {
+        title:"Service Disruptions",
+        showlegend: false,
+        yaxis: {
+            rangemode: 'tozero',
+        },
+        xaxis: {
+            rangemode: 'tozero',
+        },
+    }
 
-    Plotly.newPlot('service_disruptions', data);
+    Plotly.newPlot('service_disruptions', data, layout, {displaylogo: false, responsive: true});
 }
 
 plot_total_downtime = () => {
@@ -211,12 +230,21 @@ plot_total_downtime = () => {
       {
         x: x,
         y: y,
-        name:"Total Downtime",
         type: 'bar'
       }
-    ];
+    ]
+    var layout = {
+        title:"Total Downtime",
+        showlegend: false,
+        yaxis: {
+            rangemode: 'tozero',
+        },
+        xaxis: {
+            rangemode: 'tozero',
+        },
+    }
 
-    Plotly.newPlot('total_downtime', data);
+    Plotly.newPlot('total_downtime', data, layout, {displaylogo: false, responsive: true});
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
