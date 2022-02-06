@@ -1,0 +1,8 @@
+{
+  "data": [
+    {"application":  "Realisti.co", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+    {"application":  "Doris", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+    {"application":  "CoAgency", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+    {"application":  "iOffer", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+  ]
+}

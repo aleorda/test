@@ -1,8 +1,31 @@
 <head>
-    <script src='https://cdn.plot.ly/plotly-2.8.3.min.js'></script>
-    <script src='javascript.js'></script>
+    <title>Performance</title>
 </head>
-
 <body>
-<div id='myDiv'></div>
+    <div id="filter">
+        <div id="month_picker">
+            <label for="month">Month:</label>
+            <select name="month" id="month">
+            </select>
+        </div>
+        <div id="year_picker">
+            <label for="year">Year:</label>
+            <select name="year" id="year">
+            </select>
+        </div>
+        <div id="application_picker"></div>
+    </div>
+    <div id="info">
+        <div id='performance_issues'></div>
+        <div id='service_disruptions'></div>
+        <div id='total_downtime'></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+    <script src='https://cdn.plot.ly/plotly-2.8.3.min.js'></script>
+
+    <script src='src/js/javascript.js'></script>
+    <link rel="stylesheet" href="src/css/style.css"/>
 </body>
