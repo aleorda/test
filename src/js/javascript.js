@@ -4,9 +4,9 @@ var months = ["January","February","March","April","May","June","July","August",
 var years = []
 var applications = []
 
-var performance_issues = {}
-var service_disruptions = {}
-var total_downtime = {}
+var performance_issues = Array(months.length).fill(0)
+var service_disruptions = Array(months.length).fill(0)
+var total_downtime = Array(months.length).fill(0)
 
 var month_picker_selector = document.getElementById('month')
 var selected_month = month_picker_selector.value
@@ -15,7 +15,7 @@ month_picker_selector.onchange  = () => {
    var new_value = month_picker_selector.value
    if (new_value != selected_month) {
        selected_month = month_picker_selector.value
-       plot(selected_year, selected_month)
+       plot()
    }
 }
 
@@ -26,16 +26,24 @@ year_picker_selector.onchange = () => {
     var new_value = year_picker_selector.value
     if (new_value != selected_year) {
         selected_year = year_picker_selector.value
-        plot(selected_year, selected_month)
+        plot()
     }
 }
 
 var app_picker_selector = document.getElementById('application')
-app_picker_selector.onchange = () => {plot()}
+var selected_app = app_picker_selector.value
+
+app_picker_selector.onchange = () => {
+    var new_value = app_picker_selector.value
+    if (new_value != selected_app) {
+        selected_app = app_picker_selector.value
+        plot()
+    }
+}
 
 months.forEach(month => {
     var node = document.createElement("option")
-    node.value = month.toLowerCase()
+    node.value = month
     node.append(document.createTextNode(month))
 
     month_picker_selector.append(node)
@@ -45,7 +53,7 @@ fake = () => {
     var fake_data = {"data": []}
     Array("A","B","C","D").forEach(app => {
         Array(12).fill(0).map((_, i) => i+1).forEach(i => {
-            Array(6).fill(0).map((_, i) => i+2018).forEach(j => {
+            Array(6).fill(0).map((_, i) => i+2017).forEach(j => {
                 fake_data['data'][fake_data['data'].length] = {
                     "application":  app,
                     "date":  i + "/01/" + j,
@@ -85,19 +93,12 @@ load_data = () => {
 
         if (!years.includes(year)) {
             years[years.length] = year
-            performance_issues[year] = Array(months.length).fill(0)
-            service_disruptions[year] = Array(months.length).fill(0)
-            total_downtime[year] = Array(months.length).fill(0)
         }
-
-        performance_issues[year][month] += record['performance_issues']
-        service_disruptions[year][month] += record['service_disruptions']
-        total_downtime[year][month] += record['total_downtime']
     })
 
     applications.forEach(application => {
         var node = document.createElement("option")
-        node.value = application.toLowerCase()
+        node.value = application
         node.append(document.createTextNode(application))
 
         app_picker_selector.append(node)
@@ -111,24 +112,63 @@ load_data = () => {
         year_picker_selector.append(node)
     })
 
-    plot(Math.max(...years))
+    selected_year = Math.max(...years)
+
+    plot()
 }
 
-plot = (year=null, month=null, application=null) => {
-    plot_performance_issues(year, month, application)
-    plot_service_disruptions(year, month, application)
-    plot_total_downtime(year, month, application)
+clear = () => {
+    performance_issues = Array(months.length).fill(0)
+    service_disruptions = Array(months.length).fill(0)
+    total_downtime = Array(months.length).fill(0)
 }
 
-plot_performance_issues = (year=null, month=null, application=null) => {
-    if(year == null) {
-        year = Math.max(...years)
+apply_filter = () => {
+    var filtered = stored_data.data.filter(record => {
+        if (selected_app != null && selected_app != '')
+            return (record['application'] == selected_app)
+        return true
+    }).filter(record => {
+        if (selected_year != null && selected_year != '')
+            return (new Date(record['date']).getFullYear() == selected_year)
+        return true
+    }).filter(record => {
+        if (selected_month != null && selected_month != '')
+            return (new Date(record['date']).getMonth() == months.indexOf(selected_month))
+        return true
+    })
+
+    filtered.forEach(record => {
+        var month = new Date(record['date']).getMonth()
+
+        performance_issues[month] += record['performance_issues']
+        service_disruptions[month] += record['service_disruptions']
+        total_downtime[month] += record['total_downtime']
+    })
+}
+
+plot = () => {
+    clear()
+    apply_filter()
+
+    plot_performance_issues()
+    plot_service_disruptions()
+    plot_total_downtime()
+}
+
+plot_performance_issues = () => {
+    var x = months
+    var y = performance_issues
+
+    if (selected_month != null && selected_month != '') {
+        x = [selected_month]
+        y = y.filter(value => value > 0)
     }
 
     var data = [
       {
-        x: months,
-        y: performance_issues[year],
+        x: x,
+        y: y,
         name:"Performance Issues",
         type: 'bar'
       }
@@ -137,15 +177,19 @@ plot_performance_issues = (year=null, month=null, application=null) => {
     Plotly.newPlot('performance_issues', data);
 }
 
-plot_service_disruptions = (year=null, month=null, application=null) => {
-    if(year == null) {
-        year = Math.max(...years)
+plot_service_disruptions = () => {
+    var x = months
+    var y = service_disruptions
+
+    if (selected_month != null && selected_month != '') {
+        x = [selected_month]
+        y = y.filter(value => value > 0)
     }
 
     var data = [
       {
-        x: months,
-        y: service_disruptions[year],
+        x: x,
+        y: y,
         name:"Service Disruptions",
         type: 'bar'
       }
@@ -154,15 +198,19 @@ plot_service_disruptions = (year=null, month=null, application=null) => {
     Plotly.newPlot('service_disruptions', data);
 }
 
-plot_total_downtime = (year=null, month=null, application=null) => {
-    if(year == null) {
-        year = Math.max(...years)
+plot_total_downtime = () => {
+    var x = months
+    var y = total_downtime
+
+    if (selected_month != null && selected_month != '') {
+        x = [selected_month]
+        y = y.filter(value => value > 0)
     }
 
     var data = [
       {
-        x: months,
-        y: total_downtime[year],
+        x: x,
+        y: y,
         name:"Total Downtime",
         type: 'bar'
       }
