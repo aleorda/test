@@ -21,11 +21,11 @@ months.forEach(month => {
 fetch_data = () => {
     return load_data({
             "data": [
-              {"application":  "A", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
-              {"application":  "B", "date":  "01/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
-              {"application":  "C", "date":  "01/01/2021", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
-              {"application":  "D", "date":  "02/01/2022", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
-              {"application":  "D", "date":  "03/01/2021", "performance_issues":  4, "service_disruptions": 4, "total_downtime": 10 },
+              {"application":  "A", "date":  "01/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
+              {"application":  "B", "date":  "01/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
+              {"application":  "C", "date":  "01/01/2021", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
+              {"application":  "D", "date":  "02/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
+              {"application":  "D", "date":  "03/01/2021", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
             ]
           })
     try {
@@ -77,6 +77,7 @@ load_data = json => {
         app_picker_selector.append(node)
     })
     plot_performance_issues()
+    plot_service_disruptions()
 }
 
 plot_performance_issues = () => {
@@ -99,6 +100,28 @@ plot_performance_issues = () => {
     ];
 
     Plotly.newPlot('performance_issues', data);
+}
+
+plot_service_disruptions = () => {
+    var selected_year = year_picker_selector.value;
+    var y = service_disruptions[
+        Object.keys(service_disruptions)[Object.keys(service_disruptions).length - 1]
+    ]
+
+    if (selected_year != null && selected_year != "") {
+        y = service_disruptions[selected_year]
+    }
+
+    var data = [
+      {
+        x: months,
+        y: y,
+        name:"Service Disruptions",
+        type: 'bar'
+      }
+    ];
+
+    Plotly.newPlot('service_disruptions', data);
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
