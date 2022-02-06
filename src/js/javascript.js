@@ -1,7 +1,3 @@
-$.ajaxSetup({
-    async: false
-});
-
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 var years = []
 var applications = []
@@ -24,11 +20,10 @@ months.forEach(month => {
 
 fetch_data = () => {
     try {
-        return $.ajax({
-            url: 'data.json',
-            dataType: "json",
-            async: false,
-        }).then(result => load_data(result));
+        return $.get("data.json", function(data, status) {
+            console.log(data, status)
+            load_data(result)
+        })
     } catch (err) {
         console.log(err)
     }
