@@ -23,16 +23,27 @@ months.forEach(month => {
     month_picker_selector.append(node)
 })
 
+fake = () => {
+    var fake_data = {"data": []}
+
+    Array("A","B","C","D").forEach(app => {
+        Array(12).fill(0).map((_, i) => i+1).forEach(i => {
+            Array(6).fill(0).map((_, i) => i+2018).forEach(j => {
+                fake_data['data'][fake_data['data'].length] = {
+                    "application":  app,
+                    "date":  i + "/01/" + j,
+                    "performance_issues":  parseInt(Math.random() * 10),
+                    "service_disruptions": parseInt(Math.random() * 10),
+                    "total_downtime": parseInt(Math.random() * 10),
+                }
+            })
+        })
+    })
+    return fake_data
+  }
+
 fetch_data = () => {
-    return load_data({
-            "data": [
-              {"application":  "A", "date":  "01/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
-              {"application":  "B", "date":  "01/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
-              {"application":  "C", "date":  "01/01/2021", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
-              {"application":  "D", "date":  "02/01/2022", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
-              {"application":  "D", "date":  "03/01/2021", "performance_issues":  Math.random() * 20, "service_disruptions": Math.random() * 20, "total_downtime": Math.random() * 20 },
-            ]
-          })
+    return load_data(fake())
     try {
         return $.get("data.json", function(data, status) {
             console.log(data, status)
